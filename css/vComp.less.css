@@ -1,0 +1,38 @@
+body,
+.row {
+  font-size: .16rem;
+}
+dl > dt {
+  height: .2rem !important;
+}
+div.tip {
+  display: none;
+  position: absolute;
+  width: 16rem;
+  height: .2rem;
+}
+em.tip {
+  position: relative;
+  left: .3rem;
+  top: -0.1rem;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-right-color: #eee;
+}
+p.tip {
+  display: inline-block;
+  position: relative;
+  left: .245rem;
+  top: -0.12rem;
+  width: 1.4rem;
+  height: .26rem;
+  border-radius: 5px;
+  text-align: center;
+  color: #ff4538;
+  background-color: #eee;
+}
+i {
+  font-size: .14rem;
+}

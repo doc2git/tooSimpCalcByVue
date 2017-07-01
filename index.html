@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/vComp.less.css">
+</head>
+
+<body>
+<div id="app">
+    <div class="tip">
+        <em class="tip"></em>
+        <p class="tip">请输入有效数字</p>
+    </div>
+    <div id="sum" class="row">
+        <label for="addend">乘法计算: </label>
+        <input type="text" id="addend" style="width:.40rem;height:.16rem" @input="dotip" v-model="addend">
+        <span> + </span>
+        <input type="text" id="summand" @input="dotip" v-model="summand"> {{ addend }} * {{ summand }} = {{ summation
+        }};
+    </div>
+
+    <div id="product" class="row">
+        <label for="faciend">乘法计算: </label>
+        <input type="text" id="faciend" @input="dotip" v-model="faciend">
+        <span> * </span>
+        <input type="text" id="multiplier" @input="dotip" v-model="multiplier"> {{ faciend }} * {{ multiplier }} = {{
+        product }};
+    </div>
+
+    <div id="sinComp" class="row">
+        <label for="sin">度数sin计算: </label>
+        <input id="sin" type="text" @input="dotip" v-model="degSin"> Math.sin( {{ this.perDegRadius }} * {{ this.degSin
+        }}) = {{ sinValue }};
+    </div>
+
+    <div id="cosComp" class="row">
+        <label for="cos">度数cos计算: </label>
+        <input id="cos" type="text" @input="dotip" v-model="degCos"> Math.cos( {{ this.perDegRadius }} * {{ this.degCos
+        }}) = {{ cosValue }};
+    </div>
+
+    <div id="tanComp" class="row">
+        <label for="tan">度数tan计算: </label>
+        <input id="tan" type="text" @input="dotip" v-model="degTan"> Math.tan( {{ this.perDegRadius }} * {{ this.degTan
+        }}) = {{ tanValue }};
+    </div>
+</div>
+</body>
+
+</html>
+<script src="js/vue2.0.js"></script>
+<script>
+    var dw = 689;
+    var documentEle = document.documentElement || document.body;
+    documentEle.style.fontSize = 100 / (dw / document.documentElement.clientWidth) + "px";
+    var inputsList = document.getElementsByTagName("input");
+    for (var i = 0; i < inputsList.length; i++) {
+        inputsList[i].inpOrder = i;
+        var s = inputsList[i].style;
+        s.width = .52 + "rem";
+        s.height = .16 + "rem";
+    }
+</script>
+<script>
+    window.defaultParams = {
+
+        oInputStyle: {
+            height: ".68 rem",
+            width: "2.0 rem"
+        },
+        nanAry: [],
+        addend: 1,
+        summand: 2,
+        faciend: 20,
+        multiplier: 100,
+        degSin: 0,
+        degCos: 0,
+        degTan: 0,
+        perDegRadius: 2 * Math.PI / 360
+    };
+    window.computed = {
+        //计算属性，这里面的属性卸载DOM结构中的时候，直接写函数名就可以，不需要执行，编译的时候会自动执行
+        summation: {
+            get: function () {
+                this.addend = this.addend || 0;
+                this.summand = this.summand || 0;
+                return parseFloat(this.addend) + parseFloat(this.summand);
+            },
+            set: function () {
+                this.addend = summation / this.summand;
+            }
+        },
+        product: {
+            get: function () {
+                return this.faciend * this.multiplier;
+            },
+            set: function (product) {
+                //形象product就是当前的 product
+                this.faceiend = product / this.multiplier;
+            }
+        },
+        sinValue: {
+            get: function () {
+                return Math.sin(this.perDegRadius * this.degSin);
+            },
+            set: function () {
+                this.degSin = Math.asin(sinValue) / this.perDegRadius;
+            }
+        },
+        cosValue: {
+            get: function () {
+                return Math.cos(this.perDegRadius * this.degCos);
+            },
+            set: function () {
+                this.degCos = Math.acos(cosValue) / this.perDegRadius;
+            }
+        },
+        tanValue: {
+            get: function () {
+                return Math.tan(this.perDegRadius * this.degCos);
+            },
+            set: function () {
+                this.degCos = Math.atan(tanValue) / this.perDegRadius;
+            }
+        }
+    };
+    var v = new Vue({
+        el: "#app",
+        data: window.defaultParams,
+        computed: window.computed,
+        methods: {
+            alertt() {
+                alert("test ok.");
+            },
+            dotip: function (event) {
+                var _this = this;
+                var ele = event.target;
+                function formatVal() {
+                    _this[ele.id] = _this[ele.id] || 0;
+                    _this[ele.id] = parseFloat(_this[ele.id]);
+                }
+                formatVal();
+                function getCursortPosition(ctrl) {
+                    var CaretPos = 0; // IE Support
+                    if (document.selection) {
+                        ctrl.focus();
+                        var Sel = document.selection.createRange();
+                        Sel.moveStart('character', -ctrl.value.length);
+                        CaretPos = Sel.text.length;
+                    }
+                    // Firefox support
+                    else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+                        CaretPos = ctrl.selectionStart;
+                    return (CaretPos);
+                }
+
+                function $$(selector) {
+                    return document.querySelectorAll(selector);
+                }
+
+                function tipPos(ele) {
+                    this.addend = parseFloat(this.addend);
+                    var cursorOffset = getCursortPosition(ele);
+                    $$("div.tip")[0].style.display = "block";
+                    $$("div.tip")[0].style.left = ele.offsetLeft / documentEle.style.fontSize.replace(/[a-zA-Z]/g, "") - .3 + cursorOffset * .094 + "rem";
+                    $$("div.tip")[0].style.top = ele.offsetTop / documentEle.style.fontSize.replace(/[a-zA-Z]/g, "") - .1 + "rem";
+                };
+                function tipWhich(_this) {
+                    if (isNaN(ele.value)) {
+                        _this.nanAry.indexOf(ele) > -1 ? null : _this.nanAry.push(ele);
+                        tipPos(ele);
+                    } else {
+                        for (var i = 0; i < _this.nanAry.length; i++) {
+                            if (_this.nanAry[i] == ele) {
+                                _this.nanAry.splice(i, 1);
+                            }
+                        }
+                        if (_this.nanAry.length >= 2) {
+                            _this.nanAry.sort(function (a, b) {
+                                return a.inpOrder - b.inpOrder;
+                            });
+                        }
+                        if (_this.nanAry.length >= 1) {
+                            tipPos(_this.nanAry[0]);
+                        } else {
+                            $$("div.tip")[0].style.display = "none";
+                        }
+                    }
+                }
+                tipWhich(_this);
+            }
+        }
+    });
+</script>
